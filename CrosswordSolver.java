@@ -1,0 +1,7 @@
+class CrosswordSolver {
+	
+	public CrosswordSolver() {
+		
+	}
+	
+}
