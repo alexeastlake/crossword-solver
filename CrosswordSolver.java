@@ -12,7 +12,7 @@ import java.util.*;
 class CrosswordSolver {
 	
 	// Map with length of word as the key to list of words of that length
-	Map<Integer, List<char[]>> wordLists = new HashMap<Integer, List<char[]>>();
+	private Map<Integer, List<char[]>> wordLists = new HashMap<Integer, List<char[]>>();
 	
 	public CrosswordSolver() {
 		this.readFile("words_alpha.txt");
@@ -47,4 +47,30 @@ class CrosswordSolver {
 		} catch (FileNotFoundException e) {} catch (IOException e) {}
 	}
 	
+	/**
+	 * Gets all known matches of the given char[] to words of the same length as the char[] where spaces (' ') are unknowns
+	 * 
+	 * @param knownChars
+	 * @return list of matching words
+	 */
+	public List<String> matchWords(char[] knownChars) {
+		List<String> matches = new ArrayList<String>();
+		
+		for (char[] word : this.wordLists.get(knownChars.length)) {
+			boolean match = true;
+			
+			for (int i = 0; i < word.length; i++) {
+				if (word[i] != knownChars[i] && knownChars[i] != ' ') {
+					match = false;
+					break;
+				}
+			}
+			
+			if (match) {
+				matches.add(String.valueOf(word));
+			}
+		}
+		
+		return matches;
+	}
 }
