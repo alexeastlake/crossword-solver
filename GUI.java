@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 
@@ -13,6 +15,9 @@ import javax.swing.*;
  * @author alexeastlake
  */
 class GUI {
+	
+	// CrosswordSolver instance containing tool functionality
+	CrosswordSolver crosswordSolver;
 	
 	// Primary GUI components
 	private JFrame frame;
@@ -25,6 +30,8 @@ class GUI {
 	private JButton searchButton;
 	
 	public GUI(CrosswordSolver crosswordSolver) {
+		this.crosswordSolver = crosswordSolver;
+		
 		// Main frame setup
 		frame = new JFrame();
 		controlArea = new JPanel();
@@ -35,7 +42,7 @@ class GUI {
 		frame.getContentPane().add(outputArea);
 		
 		controlArea.setPreferredSize(new Dimension(250, 300));
-		outputArea.setPreferredSize(new Dimension(150, 300));
+		outputArea.setPreferredSize(new Dimension(200, 300));
 		
 		// Setting up GridBagLayout and its constraints for the control area
 		controlLayout = new GridBagLayout();
@@ -75,7 +82,34 @@ class GUI {
 		controlConstr.fill = GridBagConstraints.CENTER;
 		controlArea.add(searchButton, controlConstr);
 		
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!inputField.getText().equals("")) {
+					displayMatches();
+				}
+			}
+		});
+		
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	/**
+	 * Gets words matching the current contents of the inputField and adds them to the outputArea
+	 */
+	public void displayMatches() {
+		String currentWord = inputField.getText().toLowerCase();
+		List<String> matches = crosswordSolver.matchWords(currentWord.toCharArray());
+		
+		if (matches.size() != 0) {
+			outputArea.setText("Matches for \"" + currentWord + "\":" + "\n");
+			
+			for (String s : matches) {
+				outputArea.setText(outputArea.getText() + "\n" + s);
+			}
+		} else {
+			outputArea.setText("No Matches for \"" + currentWord + "\"");
+		}
 	}
 }
