@@ -36,13 +36,16 @@ class GUI {
 		frame = new JFrame();
 		controlArea = new JPanel();
 		outputArea = new JTextPane();
+		JScrollPane outputAreaScroll = new JScrollPane(outputArea);
+		frame.setTitle("Crossword Solver");
 		
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
 		frame.getContentPane().add(controlArea);
-		frame.getContentPane().add(outputArea);
+		frame.getContentPane().add(outputAreaScroll);
 		
 		controlArea.setPreferredSize(new Dimension(250, 300));
 		outputArea.setPreferredSize(new Dimension(200, 300));
+		outputArea.setEditable(false);
 		
 		// Setting up GridBagLayout and its constraints for the control area
 		controlLayout = new GridBagLayout();
@@ -102,12 +105,22 @@ class GUI {
 		String currentWord = inputField.getText().toLowerCase();
 		List<String> matches = crosswordSolver.matchWords(currentWord.toCharArray());
 		
-		if (matches.size() != 0) {
-			outputArea.setText("Matches for \"" + currentWord + "\":" + "\n");
+		if (matches.size() != 0 && matches.size() <= 100) {
+			outputArea.setText(matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
 			
 			for (String s : matches) {
 				outputArea.setText(outputArea.getText() + "\n" + s);
 			}
+			
+			outputArea.setCaretPosition(0);
+		} else if (matches.size() != 0 && matches.size() > 100) {
+			outputArea.setText("*Over 100 Matches, Displaying First 100 Matches. Consider Filling in More Letters*\n\n"	+ matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
+			
+			for (int i = 0; i < 100; i++) {
+				outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
+			}
+			
+			outputArea.setCaretPosition(0);
 		} else {
 			outputArea.setText("No Matches for \"" + currentWord + "\"");
 		}
