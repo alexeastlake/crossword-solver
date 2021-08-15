@@ -48,7 +48,7 @@ class CrosswordSolver {
 	}
 	
 	/**
-	 * Gets all known matches of the given char[] to words of the same length as the char[] where spaces (' ') are unknowns
+	 * Gets all known matches of the given char[] to words of the same length as the char[] where "?" are unknowns
 	 * 
 	 * @param knownChars
 	 * @return list of matching words
@@ -60,7 +60,7 @@ class CrosswordSolver {
 			boolean match = true;
 			
 			for (int i = 0; i < word.length; i++) {
-				if (word[i] != knownChars[i] && knownChars[i] != ' ') {
+				if (word[i] != knownChars[i] && knownChars[i] != '?') {
 					match = false;
 					break;
 				}
