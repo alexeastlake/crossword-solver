@@ -91,19 +91,19 @@ class GUI {
 		String currentWord = inputField.getText().toLowerCase();
 		List<String> matches = crosswordSolver.matchWords(currentWord.toCharArray());
 		
-		if (matches.size() != 0 && matches.size() <= 100) {
+		if (matches.size() != 0) {
 			outputArea.setText(matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
 			
-			for (String s : matches) {
-				outputArea.setText(outputArea.getText() + "\n" + s);
-			}
-			
-			outputArea.setCaretPosition(0);
-		} else if (matches.size() != 0 && matches.size() > 100) {
-			outputArea.setText("*Over 100 Matches, Displaying First 100 Matches. Consider Filling in More Letters*\n\n"	+ matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
-			
-			for (int i = 0; i < 100; i++) {
-				outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
+			if (matches.size() <= 100) {
+				for (String s : matches) {
+					outputArea.setText(outputArea.getText() + "\n" + s);
+				}
+			} else {		
+				for (int i = 0; i < 100; i++) {
+					outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
+				}
+				
+				JOptionPane.showMessageDialog(null, "Over 100 matches for \"" + currentWord + "\", displaying first 100 matches.\n" + "Consider filling in more letters.");
 			}
 			
 			outputArea.setCaretPosition(0);
