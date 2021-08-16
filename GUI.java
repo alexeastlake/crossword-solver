@@ -55,35 +55,21 @@ class GUI {
 		// Instruction labels for controls
 		JLabel inputLabel1 = new JLabel("Enter Word Letters to Search");
 		inputLabel1.setFont(new Font(inputLabel1.getFont().getName(), Font.BOLD, inputLabel1.getFont().getSize()));
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 0;
-		controlArea.add(inputLabel1, controlConstr);
+		addToGridBagLayout(inputLabel1, controlArea, controlConstr, 1, 0, 1, 1, GridBagConstraints.CENTER);
 		
 		JLabel inputLabel2 = new JLabel("Use \"?\" for Unknowns");
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 1;
-		controlArea.add(inputLabel2, controlConstr);
+		addToGridBagLayout(inputLabel2, controlArea, controlConstr, 1, 1, 1, 1, GridBagConstraints.CENTER);
 		
 		JLabel inputLabel3 = new JLabel("e.g. cr?sswo?d");
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 2;
-		controlArea.add(inputLabel3, controlConstr);
+		addToGridBagLayout(inputLabel3, controlArea, controlConstr, 1, 2, 1, 1, GridBagConstraints.CENTER);
 		
 		// Input field
 		inputField = new JTextField();
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 3;
-		controlConstr.gridwidth = 3;
-		controlConstr.fill = GridBagConstraints.HORIZONTAL;
-		controlArea.add(inputField, controlConstr);
+		addToGridBagLayout(inputField, controlArea, controlConstr, 1, 3, 3, 1, GridBagConstraints.HORIZONTAL);
 		
 		// Button to search
 		searchButton = new JButton("Search");
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 4;
-		controlConstr.gridwidth = 1;
-		controlConstr.fill = GridBagConstraints.CENTER;
-		controlArea.add(searchButton, controlConstr);
+		addToGridBagLayout(searchButton, controlArea, controlConstr, 1, 4, 1, 1, GridBagConstraints.CENTER);
 		
 		searchButton.addActionListener(new ActionListener() {
 			@Override
@@ -124,5 +110,26 @@ class GUI {
 		} else {
 			outputArea.setText("No Matches for \"" + currentWord + "\"");
 		}
+	}
+	
+	/**
+	 * Method to add components to the GridBagLayout
+	 * 
+	 * @param component to be added
+	 * @param area to add them to
+	 * @param constraints object for the GridBagLayout
+	 * @param gridx
+	 * @param gridy
+	 * @param gridwidth
+	 * @param gridheight
+	 * @param fill
+	 */
+	public void addToGridBagLayout(JComponent component, JComponent area, GridBagConstraints constraints, int gridx, int gridy, int gridwidth, int gridheight, int fill) {
+		constraints.gridx = gridx;
+		constraints.gridy = gridy;
+		constraints.gridwidth = gridwidth;
+		constraints.gridheight = gridheight;
+		constraints.fill = fill;
+		area.add(component, constraints);
 	}
 }
