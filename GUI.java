@@ -1,9 +1,7 @@
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -53,23 +51,24 @@ class GUI {
 		GridBagConstraints controlConstr = new GridBagConstraints();
 		
 		// Instruction labels for controls
-		JLabel inputLabel1 = new JLabel("Enter Word Letters to Search");
-		inputLabel1.setFont(new Font(inputLabel1.getFont().getName(), Font.BOLD, inputLabel1.getFont().getSize()));
-		addToGridBagLayout(inputLabel1, controlArea, controlConstr, 1, 0, 1, 1, GridBagConstraints.CENTER);
+		JLabel inputLabelMain = new JLabel("Enter Word Letters to Search");
+		inputLabelMain.setFont(new Font(inputLabelMain.getFont().getName(), Font.BOLD, inputLabelMain.getFont().getSize()));
+		addToGridBagLayout(inputLabelMain, controlArea, controlConstr, 1, 0, 1, 1, GridBagConstraints.CENTER);
 		
-		JLabel inputLabel2 = new JLabel("Use \"?\" for Unknowns");
-		addToGridBagLayout(inputLabel2, controlArea, controlConstr, 1, 1, 1, 1, GridBagConstraints.CENTER);
+		String[] inputLabels = {" ", "Use \"?\" for Unknowns", "e.g. cr?sswo?d", " ", "Use \"-\" for Multiple Words", "e.g. cr?sswo?d-pu?zle", " "};
 		
-		JLabel inputLabel3 = new JLabel("e.g. cr?sswo?d");
-		addToGridBagLayout(inputLabel3, controlArea, controlConstr, 1, 2, 1, 1, GridBagConstraints.CENTER);
+		for (int i = 0; i < inputLabels.length; i++) {
+			JLabel inputLabel = new JLabel(inputLabels[i]);
+			addToGridBagLayout(inputLabel, controlArea, controlConstr, 1, i + 1, 1, 1, GridBagConstraints.CENTER);
+		}
 		
 		// Input field
 		inputField = new JTextField();
-		addToGridBagLayout(inputField, controlArea, controlConstr, 1, 3, 3, 1, GridBagConstraints.HORIZONTAL);
+		addToGridBagLayout(inputField, controlArea, controlConstr, 1, inputLabels.length + 1, 3, 1, GridBagConstraints.HORIZONTAL);
 		
 		// Button to search
 		searchButton = new JButton("Search");
-		addToGridBagLayout(searchButton, controlArea, controlConstr, 1, 4, 1, 1, GridBagConstraints.CENTER);
+		addToGridBagLayout(searchButton, controlArea, controlConstr, 1, inputLabels.length + 2, 1, 1, GridBagConstraints.CENTER);
 		
 		searchButton.addActionListener(new ActionListener() {
 			@Override
@@ -88,28 +87,49 @@ class GUI {
 	 * Gets words matching the current contents of the inputField and adds them to the outputArea
 	 */
 	public void displayMatches() {
-		String currentWord = inputField.getText().toLowerCase();
-		List<String> matches = crosswordSolver.matchWords(currentWord.toCharArray());
+		String[] words = {};
 		
-		if (matches.size() != 0) {
-			outputArea.setText(matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
+		if (inputField.getText().contains("-")) {
+			words = inputField.getText().toLowerCase().split("-");
+		} else {
+			words = new String[]{inputField.getText().toLowerCase()};
+		}
+		
+		outputArea.setText("");
+		
+		for (int i = 0; i < words.length; i++) {
+			List<String> matches = crosswordSolver.matchWords(words[i].toCharArray());
 			
-			if (matches.size() <= 100) {
-				for (String s : matches) {
-					outputArea.setText(outputArea.getText() + "\n" + s);
-				}
-			} else {		
-				for (int i = 0; i < 100; i++) {
-					outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
+			if (matches.size() != 0) {
+				if (matches.size() == 1) {
+					outputArea.setText(outputArea.getText() + matches.size() + " Match for \"" + words[i] + "\":" + "\n");
+				} else {
+					outputArea.setText(outputArea.getText() + matches.size() + " Matches for \"" + words[i] + "\":" + "\n");
 				}
 				
-				JOptionPane.showMessageDialog(null, "Over 100 matches for \"" + currentWord + "\", displaying first 100 matches.\n" + "Consider filling in more letters.");
+				if (matches.size() <= 100) {
+					for (String s : matches) {
+						outputArea.setText(outputArea.getText() + "\n" + s);
+					}
+				} else {		
+					for (int j = 0; j < 100; j++) {
+						outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
+					}
+					
+					JOptionPane.showMessageDialog(null, "Over 100 matches for \"" + words[i] + "\", displaying first 100 matches.\n" + "Consider filling in more letters.");
+				}
+			} else {
+				outputArea.setText(outputArea.getText() + "No Matches for \"" + words[i] + "\"");
 			}
 			
-			outputArea.setCaretPosition(0);
-		} else {
-			outputArea.setText("No Matches for \"" + currentWord + "\"");
+			if (i != words.length) {
+				outputArea.setText(outputArea.getText() + "\n\n");
+			} else {
+				outputArea.setText(outputArea.getText() + "\n");
+			}
 		}
+		
+		outputArea.setCaretPosition(0);
 	}
 	
 	/**
