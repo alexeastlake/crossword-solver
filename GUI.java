@@ -1,9 +1,7 @@
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -17,12 +15,17 @@ import javax.swing.*;
 class GUI {
 	
 	// CrosswordSolver instance containing tool functionality
-	CrosswordSolver crosswordSolver;
+	private CrosswordSolver crosswordSolver;
 	
 	// Primary GUI components
 	private JFrame frame;
 	private JPanel controlArea;
 	private JTextPane outputArea;
+	
+	// Menu Bar components
+	private JMenuBar menuBar;
+	private JMenu helpMenu;
+	private JMenuItem howToMenuItem;
 	
 	// Control Panel components
 	private GridBagLayout controlLayout;
@@ -47,43 +50,47 @@ class GUI {
 		outputArea.setPreferredSize(new Dimension(200, 300));
 		outputArea.setEditable(false);
 		
+		// Menu bar setup
+		menuBar = new JMenuBar();
+		helpMenu = new JMenu("Help");
+		howToMenuItem = new JMenuItem("How To Use");
+		menuBar.add(helpMenu);
+		helpMenu.add(howToMenuItem);
+		frame.setJMenuBar(menuBar);
+		
+		howToMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Crossword Solver - How to Use\n\n"
+						+ "Enter partial words using \"?\" for unknown letters and \"-\" between words "
+						+ "to find matching full words.");
+			}
+		});
+		
 		// Setting up GridBagLayout and its constraints for the control area
 		controlLayout = new GridBagLayout();
 		controlArea.setLayout(controlLayout);
 		GridBagConstraints controlConstr = new GridBagConstraints();
 		
 		// Instruction labels for controls
-		JLabel inputLabel1 = new JLabel("Enter Word Letters to Search");
-		inputLabel1.setFont(new Font(inputLabel1.getFont().getName(), Font.BOLD, inputLabel1.getFont().getSize()));
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 0;
-		controlArea.add(inputLabel1, controlConstr);
+		JLabel inputLabelMain = new JLabel("Enter Word Letters to Search");
+		inputLabelMain.setFont(new Font(inputLabelMain.getFont().getName(), Font.BOLD, inputLabelMain.getFont().getSize()));
+		addToGridBagLayout(inputLabelMain, controlArea, controlConstr, 1, 0, 1, 1, GridBagConstraints.CENTER);
 		
-		JLabel inputLabel2 = new JLabel("Use \"?\" for Unknowns");
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 1;
-		controlArea.add(inputLabel2, controlConstr);
+		String[] inputLabels = {" ", "Use \"?\" for Unknowns", "e.g. cr?sswo?d", " ", "Use \"-\" for Multiple Words", "e.g. cr?sswo?d-pu?zle", " "};
 		
-		JLabel inputLabel3 = new JLabel("e.g. cr?sswo?d");
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 2;
-		controlArea.add(inputLabel3, controlConstr);
+		for (int i = 0; i < inputLabels.length; i++) {
+			JLabel inputLabel = new JLabel(inputLabels[i]);
+			addToGridBagLayout(inputLabel, controlArea, controlConstr, 1, i + 1, 1, 1, GridBagConstraints.CENTER);
+		}
 		
 		// Input field
 		inputField = new JTextField();
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 3;
-		controlConstr.gridwidth = 3;
-		controlConstr.fill = GridBagConstraints.HORIZONTAL;
-		controlArea.add(inputField, controlConstr);
+		addToGridBagLayout(inputField, controlArea, controlConstr, 1, inputLabels.length + 1, 3, 1, GridBagConstraints.HORIZONTAL);
 		
 		// Button to search
 		searchButton = new JButton("Search");
-		controlConstr.gridx = 1;
-		controlConstr.gridy = 4;
-		controlConstr.gridwidth = 1;
-		controlConstr.fill = GridBagConstraints.CENTER;
-		controlArea.add(searchButton, controlConstr);
+		addToGridBagLayout(searchButton, controlArea, controlConstr, 1, inputLabels.length + 2, 1, 1, GridBagConstraints.CENTER);
 		
 		searchButton.addActionListener(new ActionListener() {
 			@Override
@@ -102,27 +109,69 @@ class GUI {
 	 * Gets words matching the current contents of the inputField and adds them to the outputArea
 	 */
 	public void displayMatches() {
-		String currentWord = inputField.getText().toLowerCase();
-		List<String> matches = crosswordSolver.matchWords(currentWord.toCharArray());
+		String[] words = {};
 		
-		if (matches.size() != 0 && matches.size() <= 100) {
-			outputArea.setText(matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
-			
-			for (String s : matches) {
-				outputArea.setText(outputArea.getText() + "\n" + s);
-			}
-			
-			outputArea.setCaretPosition(0);
-		} else if (matches.size() != 0 && matches.size() > 100) {
-			outputArea.setText("*Over 100 Matches, Displaying First 100 Matches. Consider Filling in More Letters*\n\n"	+ matches.size() + " Matches for \"" + currentWord + "\":" + "\n");
-			
-			for (int i = 0; i < 100; i++) {
-				outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
-			}
-			
-			outputArea.setCaretPosition(0);
+		if (inputField.getText().contains("-")) {
+			words = inputField.getText().toLowerCase().split("-");
 		} else {
-			outputArea.setText("No Matches for \"" + currentWord + "\"");
+			words = new String[]{inputField.getText().toLowerCase()};
 		}
+		
+		outputArea.setText("");
+		
+		for (int i = 0; i < words.length; i++) {
+			List<String> matches = crosswordSolver.matchWords(words[i].toCharArray());
+			
+			if (matches.size() != 0) {
+				if (matches.size() == 1) {
+					outputArea.setText(outputArea.getText() + matches.size() + " Match for \"" + words[i] + "\":" + "\n");
+				} else {
+					outputArea.setText(outputArea.getText() + matches.size() + " Matches for \"" + words[i] + "\":" + "\n");
+				}
+				
+				if (matches.size() <= 100) {
+					for (String s : matches) {
+						outputArea.setText(outputArea.getText() + "\n" + s);
+					}
+				} else {		
+					for (int j = 0; j < 100; j++) {
+						outputArea.setText(outputArea.getText() + "\n" + matches.get(i));
+					}
+					
+					JOptionPane.showMessageDialog(null, "Over 100 matches for \"" + words[i] + "\", displaying first 100 matches.\n" + "Consider filling in more letters.");
+				}
+			} else {
+				outputArea.setText(outputArea.getText() + "No Matches for \"" + words[i] + "\"");
+			}
+			
+			if (i != words.length) {
+				outputArea.setText(outputArea.getText() + "\n\n");
+			} else {
+				outputArea.setText(outputArea.getText() + "\n");
+			}
+		}
+		
+		outputArea.setCaretPosition(0);
+	}
+	
+	/**
+	 * Method to add components to the GridBagLayout
+	 * 
+	 * @param component to be added
+	 * @param area to add them to
+	 * @param constraints object for the GridBagLayout
+	 * @param gridx
+	 * @param gridy
+	 * @param gridwidth
+	 * @param gridheight
+	 * @param fill
+	 */
+	public void addToGridBagLayout(JComponent component, JComponent area, GridBagConstraints constraints, int gridx, int gridy, int gridwidth, int gridheight, int fill) {
+		constraints.gridx = gridx;
+		constraints.gridy = gridy;
+		constraints.gridwidth = gridwidth;
+		constraints.gridheight = gridheight;
+		constraints.fill = fill;
+		area.add(component, constraints);
 	}
 }
