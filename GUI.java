@@ -15,12 +15,17 @@ import javax.swing.*;
 class GUI {
 	
 	// CrosswordSolver instance containing tool functionality
-	CrosswordSolver crosswordSolver;
+	private CrosswordSolver crosswordSolver;
 	
 	// Primary GUI components
 	private JFrame frame;
 	private JPanel controlArea;
 	private JTextPane outputArea;
+	
+	// Menu Bar components
+	private JMenuBar menuBar;
+	private JMenu helpMenu;
+	private JMenuItem howToMenuItem;
 	
 	// Control Panel components
 	private GridBagLayout controlLayout;
@@ -44,6 +49,23 @@ class GUI {
 		controlArea.setPreferredSize(new Dimension(250, 300));
 		outputArea.setPreferredSize(new Dimension(200, 300));
 		outputArea.setEditable(false);
+		
+		// Menu bar setup
+		menuBar = new JMenuBar();
+		helpMenu = new JMenu("Help");
+		howToMenuItem = new JMenuItem("How To Use");
+		menuBar.add(helpMenu);
+		helpMenu.add(howToMenuItem);
+		frame.setJMenuBar(menuBar);
+		
+		howToMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Crossword Solver - How to Use\n\n"
+						+ "Enter partial words using \"?\" for unknown letters and \"-\" between words "
+						+ "to find matching full words.");
+			}
+		});
 		
 		// Setting up GridBagLayout and its constraints for the control area
 		controlLayout = new GridBagLayout();
