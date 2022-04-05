@@ -2,18 +2,18 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 /**
- * Contains the main method for the Crossword Solver tool
+ * Contains the main method for the Word Finder tool
  * 
  * @author alexeastlake
  */
 class Main {
 	
 	public static void main(String args[]) {
-		CrosswordSolver crosswordSolver = new CrosswordSolver();
+		WordFinder wordFinder = new WordFinder();
 		
 		try {
-			crosswordSolver.readFile("words_alpha.txt");
-			new GUI(crosswordSolver);
+			wordFinder.readFile("words_alpha.txt");
+			new GUI(wordFinder);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Error reading word files:\n" + e.getMessage());
 			System.exit(0);

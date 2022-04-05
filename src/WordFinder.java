@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * The CrosswordSolver class contains the main functionality of the tool
+ * The WordFinder class contains the main functionality of the tool
  * 
  * @author alexeastlake
  */
-class CrosswordSolver {
+class WordFinder {
 	
 	// Map with length of word as the key to list of words of that length
 	private Map<Integer, List<char[]>> wordLists = new HashMap<Integer, List<char[]>>();

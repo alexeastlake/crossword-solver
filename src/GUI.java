@@ -8,14 +8,14 @@ import java.util.*;
 import javax.swing.*;
 
 /**
- * The GUI class creates and uses an interface to interact with the CrosswordSolver class
+ * The GUI class creates and uses an interface to interact with the WordFinder class
  * 
  * @author alexeastlake
  */
 class GUI {
 	
-	// CrosswordSolver instance containing tool functionality
-	private CrosswordSolver crosswordSolver;
+	// WordFinder instance containing tool functionality
+	private WordFinder wordFinder;
 	
 	// Primary GUI components
 	private JFrame frame;
@@ -32,15 +32,15 @@ class GUI {
 	private JTextField inputField;
 	private JButton searchButton;
 	
-	public GUI(CrosswordSolver crosswordSolver) {
-		this.crosswordSolver = crosswordSolver;
+	public GUI(WordFinder wordFinder) {
+		this.wordFinder = wordFinder;
 		
 		// Main frame setup
 		frame = new JFrame();
 		controlArea = new JPanel();
 		outputArea = new JTextPane();
 		JScrollPane outputAreaScroll = new JScrollPane(outputArea);
-		frame.setTitle("Crossword Solver");
+		frame.setTitle("Word Finder");
 		
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
 		frame.getContentPane().add(controlArea);
@@ -61,7 +61,7 @@ class GUI {
 		howToMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Crossword Solver - How to Use\n\n"
+				JOptionPane.showMessageDialog(null, "Word Finder - How to Use\n\n"
 						+ "Enter partial words using \"?\" for unknown letters and \"-\" between words "
 						+ "to find matching full words.");
 			}
@@ -77,7 +77,7 @@ class GUI {
 		inputLabelMain.setFont(new Font(inputLabelMain.getFont().getName(), Font.BOLD, inputLabelMain.getFont().getSize()));
 		addToGridBagLayout(inputLabelMain, controlArea, controlConstr, 1, 0, 1, 1, GridBagConstraints.CENTER);
 		
-		String[] inputLabels = {" ", "Use \"?\" for Unknowns", "e.g. cr?sswo?d", " ", "Use \"-\" for Multiple Words", "e.g. cr?sswo?d-pu?zle", " "};
+		String[] inputLabels = {" ", "Use \"?\" for Unknowns", "e.g. cr?sswo?d", " ", "Use \"-\" for Multiple Words", "e.g. wo?d-fi?d?r", " "};
 		
 		for (int i = 0; i < inputLabels.length; i++) {
 			JLabel inputLabel = new JLabel(inputLabels[i]);
@@ -120,7 +120,7 @@ class GUI {
 		outputArea.setText("");
 		
 		for (int i = 0; i < words.length; i++) {
-			List<String> matches = crosswordSolver.matchWords(words[i].toCharArray());
+			List<String> matches = wordFinder.matchWords(words[i].toCharArray());
 			
 			if (matches.size() != 0) {
 				if (matches.size() == 1) {
